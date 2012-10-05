@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<head>
+	<title>jQuery.chain() demo</title>
+
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+	<script type="text/javascript" src="jquery.chain.js"></script>
+	
+	<script type="text/javascript">
+	
+	function log(d)
+	{
+		var c = $('#console')
+		c.val(c.val() + d + '\n');
+	}
+	
+	function _dfrFunc(msg)
+	{
+		return function()
+		{
+			log(msg);			
+			return new $.Deferred();
+		}
+	}
+	
+	function f1()
+	{
+		var dfr = (_dfrFunc('f1 called!'))();
+		dfr.resolve();
+		return dfr.promise();
+	}
+	
+	function f2()
+	{
+		var dfr = (_dfrFunc('f2 called!'))();
+
+		setTimeout(function() {
+			log('f2 complete!')
+			dfr.resolve();
+		}, 1000);
+		
+		return dfr.promise();
+	}
+
+	$().ready(function () {
+		$.chain([f1, f2]).done(function () {
+			log('ZOMG chain done!');
+		});
+	});	
+	</script>
+</head>
+<body>
+
+
+<form>
+<textarea id="console" rows="20" cols="80"></textarea>
+</form>
+
+</body>
+</html>
